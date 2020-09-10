@@ -33,8 +33,7 @@ public class GameInputManager implements KeyListener {
      * @param e
      */
     @Override
-    public void keyPressed(KeyEvent e) { //37 <---> 39
-        //System.out.println("Pressed:" + e.getKeyCode());
+    public void keyPressed(KeyEvent e) { //yandere dev
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             EntityManager.getInstance().player.changeDirection(EntityManager.getInstance().player.direction + 0.5f);
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
