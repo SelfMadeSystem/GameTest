@@ -20,6 +20,6 @@ public class StaticEntity extends GEntity {
     }
 
     @Override
-    public void addToPos() {
+    public void move() {
     }
 }

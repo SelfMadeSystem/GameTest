@@ -12,12 +12,12 @@ public class EntityManager implements IUpdateable {
         return instance == null ? instance = new EntityManager() : instance;
     }
 
-    public final Set<GEntity> entities = new HashSet<>();
+    public final List<GEntity> entities = new ArrayList<>();
     public GPlayer player;
 
-    public Set<GEntity> getEntities() {
-        Set<GEntity> gEntities = new HashSet<>(entities);
-        gEntities.add(player);
+    public Collection<GEntity> getEntities() {
+        List<GEntity> gEntities = new ArrayList<>(entities);
+        gEntities.add(0, player);
         return gEntities;
     }
 
@@ -40,6 +40,9 @@ public class EntityManager implements IUpdateable {
     public void update() {
         for (GEntity e : getEntities()) {
             e.tick();
+        }
+        for (GEntity e : getEntities()) {
+            e.actuallyMove();
         }
     }
 }

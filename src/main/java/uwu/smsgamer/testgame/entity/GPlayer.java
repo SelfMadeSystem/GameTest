@@ -1,5 +1,7 @@
 package uwu.smsgamer.testgame.entity;
 
+import uwu.smsgamer.testgame.input.*;
+import uwu.smsgamer.testgame.screens.GameScreenManager;
 import uwu.smsgamer.testgame.utils.*;
 
 public class GPlayer extends GEntity {
@@ -11,6 +13,13 @@ public class GPlayer extends GEntity {
 
     @Override
     public void tick() {
+        if (GameInputManager.SPAWN.isPressed()) {
+            pos.set(0, 0);
+            GameScreenManager.inGameScreen.prev.set(0, 0);
+            GameScreenManager.inGameScreen.camera.setFocus(GameScreenManager.inGameScreen.prev.toPoint2D());
+        }
+        inputs.x = PlayerInput.horizontal();
+        inputs.y = PlayerInput.vertical();
         if (inputs.y > 0)
             this.relVel.y = 1.5 * inputs.y;
         else if (inputs.y < 0)
@@ -22,7 +31,7 @@ public class GPlayer extends GEntity {
     }
 
     @Override
-    public void addToPos() {
+    public void move() {
         moveWithCollision(0.3);
     }
 

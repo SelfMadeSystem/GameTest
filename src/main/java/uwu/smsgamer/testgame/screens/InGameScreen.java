@@ -19,8 +19,8 @@ public class InGameScreen extends GameScreen {
         super(NAME);
     }
 
-    private final Camera camera = new Camera();
-    private V2D prev = new V2D();
+    public final Camera camera = new Camera();
+    public V2D prev = new V2D();
 
     /**
      * Prepare the GuiComponent and all its child Components (Makes the GuiComponent visible and adds mouse listeners.).

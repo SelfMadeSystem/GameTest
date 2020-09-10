@@ -8,6 +8,7 @@ public class OwOEntity extends GEntity {
         this.pos = pos;
         this.size = size;
         this.hitMethod = 2;
+        this.resistance = 5;
     }
 
     @Override
@@ -24,8 +25,8 @@ public class OwOEntity extends GEntity {
     }
 
     @Override
-    public void addToPos() {
-        moveWithCollision(0.3);
+    public void move() {
+        moveWithCollision(0);
     }
 
     @Override

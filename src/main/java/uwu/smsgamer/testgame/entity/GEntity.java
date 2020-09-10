@@ -7,6 +7,7 @@ public abstract class GEntity {
     public V2D pos = new V2D();
     // Grid velocity
     public V2D gridVel = new V2D();
+    public V2D finalVel = new V2D();
     // Relative velocity
     public V2D relVel = new V2D();
     public float direction = 0;
@@ -14,6 +15,7 @@ public abstract class GEntity {
     //1 push out
     //2 solid
     public int hitMethod = 0;
+    public double resistance = 1;
 
     public void tick() {
         direction = MathUtils.wrapAngle180(direction);
@@ -24,7 +26,7 @@ public abstract class GEntity {
             gridVel.x = 0;
         if (Math.abs(gridVel.y) < 0.0001)
             gridVel.y = 0;
-        addToPos();
+        move();
     }
 
     public void applyBasicMovement() {
@@ -37,7 +39,11 @@ public abstract class GEntity {
             relVel.y = 0;
     }
 
-    public void moveWithCollision(double d) {
+    public void moveWithCollision(double pushOut) {
+        if (resistance == 0) {
+            resistance = 0.5;
+            new IllegalArgumentException("Resistance is equals to zero.").printStackTrace();
+        }
         for (GEntity entity : EntityManager.getInstance().getEntities()) {
             if (entity.equals(this))
                 continue;
@@ -48,25 +54,38 @@ public abstract class GEntity {
                     if (!box.collided(myBox))
                         continue;
                     float dir = (float) Math.atan2(entity.pos.y - this.pos.y, entity.pos.x - this.pos.x);
-                    gridVel.add(MathUtils.cosr(dir) * d, MathUtils.sinr(dir) * d);
+                    gridVel.add(MathUtils.cosr(dir) * pushOut, MathUtils.sinr(dir) * pushOut);
                     break;
                 }
-                case 2: {
-                    if (box.collided(myBox))
+                case 2: {// TODO: 2020-09-10 shit code idk why it no work wtf
+                    if (box.collided(myBox)) {
+                        float dir = (float) Math.atan2(entity.pos.y - this.pos.y, entity.pos.x - this.pos.x);
+                        System.out.println("wtf");
+                        for (float d = 0.05f; box.clone().add(gridVel.clone().add(finalVel)).collided(myBox); ) {
+                            finalVel.add(MathUtils.cosr(dir)*d, MathUtils.sinr(dir)*d);
+                        }
                         continue;
+                    }
                     if (myBox.clone().add(-gridVel.x, 0).collided(box)) {
                         // boolean above = myBox.max.x < box.max.x;
-                        gridVel.x = 0;
+                        System.out.println(entity.gridVel.x + "/" + resistance + "/" + (entity.gridVel.x / (resistance)) +
+                          "/" + getClass().getSimpleName());
+                        finalVel.x = entity.gridVel.x / (resistance/ entity.resistance);
+                        entity.gridVel.x += gridVel.x / (entity.resistance / resistance);
+                        finalVel.x -= gridVel.x;
                     } else if (myBox.clone().add(0, -gridVel.y).collided(box)) {
                         // boolean above = myBox.max.y < box.max.y;
-                        gridVel.y = 0;
+                        System.out.println(entity.gridVel.y + "/" + resistance + "/" + (entity.gridVel.y / (resistance)) +
+                          "/" + getClass().getSimpleName());
+                        finalVel.y = entity.gridVel.y / (resistance/ entity.resistance);
+                        entity.gridVel.y += gridVel.y / (entity.resistance / resistance);
+                        finalVel.y -= gridVel.y;
                     }
                 }
 
             }
             //V2D force = getRotCollWEnts().mult(d);
         }
-        pos.add(-gridVel.x, -gridVel.y);
     }
 
     /*//get rotational collision with an entity
@@ -98,8 +117,13 @@ public abstract class GEntity {
         return collision;
     }*/
 
-    public void addToPos() {
-        pos.add(gridVel.clone().mult(-1, -1));
+    public void move() {
+        //pos.add(gridVel.clone().mult(-1, -1));
+    }
+
+    public void actuallyMove() {
+        pos.add(gridVel.clone().add(finalVel).mult(-1));
+        finalVel.set(0, 0);
     }
 
     public void changeDirection(float direction) {

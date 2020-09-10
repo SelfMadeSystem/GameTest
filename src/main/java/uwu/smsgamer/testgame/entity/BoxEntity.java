@@ -8,6 +8,7 @@ public class BoxEntity extends GEntity {
         this.pos = pos;
         this.size = size;
         this.hitMethod = 2;
+        this.resistance = 0.5;
     }
 
     @Override
@@ -17,6 +18,12 @@ public class BoxEntity extends GEntity {
 
     @Override
     public void tick() {
+        gridVel.y *= 0.95;
+        gridVel.x *= 0.95;
+        if (Math.abs(gridVel.x) < 0.0001)
+            gridVel.x = 0;
+        if (Math.abs(gridVel.y) < 0.0001)
+            gridVel.y = 0;
     }
 
     @Override
