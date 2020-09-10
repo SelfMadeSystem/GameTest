@@ -1,0 +1,48 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id "com.github.johnrengelman.shadow" version "6.0.0"
+    id 'java'
+}
+
+apply plugin: 'java'
+
+group 'uwu.smsgamer'
+version '1.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {//provided
+    shadow 'de.gurkenlabs:litiengine:0.5.0'
+
+    provided 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow] // ***
+    manifest {
+        attributes(
+                'Main-Class': 'Main'
+        )
+    }
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
